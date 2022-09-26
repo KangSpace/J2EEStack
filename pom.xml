@@ -8,14 +8,41 @@
     <artifactId>j2eestack</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
+        <module>main-module</module>
         <module>code-collection</module>
     </modules>
     <packaging>pom</packaging>
+
+    <licenses>
+        <license>
+            <name>Apache License Version 2.0</name>
+            <url>https://github.com/KangSpace/J2EEStack/blob/main/LICENSE</url>
+        </license>
+    </licenses>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+    </repositories>
 
     <properties>
         <version>1.0-SNAPSHOT</version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <cglib.version>3.1</cglib.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>${cglib.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
