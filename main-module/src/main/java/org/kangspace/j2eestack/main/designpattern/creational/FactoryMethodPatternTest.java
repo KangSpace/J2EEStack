@@ -1,12 +1,17 @@
 package org.kangspace.j2eestack.main.designpattern.creational;
 
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.Executors;
+
 /**
  * <pre>
  * 工厂方法:
  *      提供一个创建对象的接口，由子类决定实例化哪个类。FactoryMethod使一个类的实例化延迟到其子类。
  * 1. 普通工厂方法
+ *    {@link ThreadFactory#newThread(Runnable)}
  * 2. 多个工厂方法模式
  * 3. 静态工厂方法
+ *    {@link Executors#defaultThreadFactory()}
  * </pre>
  * @author kango2gler@gmail.com
  */
@@ -73,6 +78,7 @@ public class FactoryMethodPatternTest {
         Work teacherWork = new TeacherWorkFactory().getWork();
         teacherWork.doWork();
     }
+
     public static void main(String[] args) {
         main();
     }

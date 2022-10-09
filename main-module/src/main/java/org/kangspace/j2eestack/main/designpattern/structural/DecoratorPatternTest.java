@@ -22,7 +22,7 @@ public class DecoratorPatternTest {
     /**
      * 饮料接口
      */
-    static abstract class YinLiao {
+    static abstract class Drink {
         String desc = "普通水";
 
         String getDescription() {
@@ -35,7 +35,7 @@ public class DecoratorPatternTest {
     /**
      * 饮料的装饰者
      */
-    static abstract class YinLiaoDecorator extends YinLiao {
+    static abstract class DrinkDecorator extends Drink {
         @Override
         public abstract String getDescription();
     }
@@ -43,8 +43,8 @@ public class DecoratorPatternTest {
     /**
      * 碳酸饮料
      */
-    static class TanSuanYinLiao extends YinLiao {
-        public TanSuanYinLiao() {
+    static class TanSuanDrink extends Drink {
+        public TanSuanDrink() {
             desc = "普通碳酸饮料";
         }
 
@@ -57,8 +57,8 @@ public class DecoratorPatternTest {
     /**
      * 可乐饮料
      */
-    static class KeLeYinLiao extends YinLiao {
-        public KeLeYinLiao() {
+    static class KeLeDrink extends Drink {
+        public KeLeDrink() {
             desc = "可乐";
         }
 
@@ -71,10 +71,10 @@ public class DecoratorPatternTest {
     /**
      * 雪碧: 碳酸饮料具体装饰者
      */
-    static class XueBi extends YinLiaoDecorator {
-        YinLiao decorated;
+    static class XueBi extends DrinkDecorator {
+        Drink decorated;
 
-        public XueBi(YinLiao decorated) {
+        public XueBi(Drink decorated) {
             this.decorated = decorated;
             desc = "雪碧";
         }
@@ -93,10 +93,10 @@ public class DecoratorPatternTest {
     /**
      * 美年达: 碳酸饮料具体装饰者
      */
-    static class MeiNianDa extends YinLiaoDecorator {
-        YinLiao decorated;
+    static class MeiNianDa extends DrinkDecorator {
+        Drink decorated;
 
-        public MeiNianDa(YinLiao decorated) {
+        public MeiNianDa(Drink decorated) {
             this.decorated = decorated;
             desc = "美年达";
         }
@@ -115,11 +115,11 @@ public class DecoratorPatternTest {
 
     static void main() {
         //创建一个碳酸饮料
-        YinLiao yinLiao = new TanSuanYinLiao();
-        System.out.println(yinLiao.getDescription() + "," + yinLiao.cost() + "元");
-        XueBi xueBi = new XueBi(yinLiao);
+        Drink Drink = new TanSuanDrink();
+        System.out.println(Drink.getDescription() + "," + Drink.cost() + "元");
+        XueBi xueBi = new XueBi(Drink);
         System.out.println(xueBi.getDescription() + "," + xueBi.cost() + "元");
-        MeiNianDa meiNianDa = new MeiNianDa(yinLiao);
+        MeiNianDa meiNianDa = new MeiNianDa(Drink);
         System.out.println(meiNianDa.getDescription() + "," + meiNianDa.cost() + "元");
 
     }

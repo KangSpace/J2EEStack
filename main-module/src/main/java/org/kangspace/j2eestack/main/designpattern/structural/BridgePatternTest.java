@@ -12,7 +12,7 @@ package org.kangspace.j2eestack.main.designpattern.structural;
  * @author kango2gler@gmail.com
  */
 public class BridgePatternTest {
-    interface Qiao{
+    interface Bridge{
         //目的地B
         void targetAreaB();
     }
@@ -20,14 +20,14 @@ public class BridgePatternTest {
     /**
      *  目的地B1,B2
      */
-    static class AreaB1 implements Qiao {
+    static class AreaB1 implements Bridge {
 
         @Override
         public void targetAreaB() {
             System.out.println("我要去B1");
         }
     }
-    static class AreaB2 implements Qiao {
+    static class AreaB2 implements Bridge {
 
         @Override
         public void targetAreaB() {
@@ -39,7 +39,7 @@ public class BridgePatternTest {
      *  抽象来源地A：AreaA
      */
     static abstract class AreaA{
-        Qiao qiao;
+        Bridge bridge;
         abstract void fromAreaA();
     }
     /**
@@ -62,9 +62,9 @@ public class BridgePatternTest {
     }
     static void bridgeMan(){
         AreaA a = new AreaA2();
-        a.qiao = new AreaB1();
+        a.bridge = new AreaB1();
         a.fromAreaA();
-        a.qiao.targetAreaB();
+        a.bridge.targetAreaB();
     }
 
     static void main(){

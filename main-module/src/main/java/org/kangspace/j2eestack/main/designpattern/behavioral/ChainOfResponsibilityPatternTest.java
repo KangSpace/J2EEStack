@@ -19,7 +19,7 @@ import java.util.List;
  * </pre>
  * @author kango2gler@gmail.com
  */
-public class CORPatternTest {
+public class ChainOfResponsibilityPatternTest {
     //----------------------责任链模式写法1: 接口方法中传入责任链对象,有责任链对象调度各个责任对象处理------------------
     /**
      * 责任链对象公共接口
