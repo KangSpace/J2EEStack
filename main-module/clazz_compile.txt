@@ -1,0 +1,3 @@
+src/main/java/org/kangspace/j2eestack/main/clazz/HelloWorld.java
+src/main/java/org/kangspace/j2eestack/main/clazz/Ping.java
+src/main/java/org/kangspace/j2eestack/main/clazz/Pong.java
