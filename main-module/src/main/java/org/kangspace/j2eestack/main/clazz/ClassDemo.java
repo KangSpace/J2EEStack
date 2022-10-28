@@ -3,7 +3,7 @@ package org.kangspace.j2eestack.main.clazz;
 /**
  * Lambda Demo
  *
- * @author kangxuefeng
+ * @author kango2gler@gmail.com
  * @since 2022/10/28
  */
 public class ClassDemo {
