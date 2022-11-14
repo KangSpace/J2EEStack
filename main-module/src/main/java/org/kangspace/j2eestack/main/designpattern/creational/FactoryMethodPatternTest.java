@@ -1,7 +1,7 @@
 package org.kangspace.j2eestack.main.designpattern.creational;
 
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * <pre>
