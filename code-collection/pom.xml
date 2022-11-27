@@ -15,6 +15,31 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+        <lombok.version>1.18.24</lombok.version>
 
+        <jackson.version>2.12.5</jackson.version>
+        <log4j-to-slf4j.version>2.13.3</log4j-to-slf4j.version>
+    </properties>
+    <dependencies>
+
+        <!--lombok-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+
+        <!-- log -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-to-slf4j</artifactId>
+            <version>${log4j-to-slf4j.version}</version>
+        </dependency>
+
+    </dependencies>
 </project>
