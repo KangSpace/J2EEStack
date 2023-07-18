@@ -17,4 +17,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <!-- redis,使用jedis客户端排除lettuce -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>2.4.9</version>
+        </dependency>
+    </dependencies>
+
 </project>
