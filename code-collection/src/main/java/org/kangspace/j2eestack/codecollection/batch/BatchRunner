@@ -1,0 +1,20 @@
+package org.kangspace.j2eestack.codecollection.batch;
+
+import java.util.function.Consumer;
+
+/**
+ * 批量执行
+ * @author kango2gler@gmail.com
+ * @since 2022/10/28
+ */
+public class BatchRunner {
+  public static <T> void batch(List<T> data, Consumer<List<T>> batchHandle,int batchCount){
+      Integer refLen = data.size(), len = refLen;
+      for (int i = 0,nexti = (len>batchCount? batchCount : len);
+           len>0;
+           i+=( i+batchCount>refLen?refLen-i:batchCount),
+                   nexti+= ( nexti+batchCount>refLen?refLen-nexti:batchCount),len-=batchCount){
+          batchHandle.accept(data.subList(i, nexti));
+      }
+  }
+}
