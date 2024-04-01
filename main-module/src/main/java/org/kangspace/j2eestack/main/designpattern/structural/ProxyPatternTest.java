@@ -38,6 +38,11 @@ public class ProxyPatternTest {
         @Override
         public void action(String desc) {
             System.out.println("普通对象实现类:" +desc);
+            this.run();
+        }
+        @Override
+        public void run() {
+            System.out.println("普通对象实现类run:"+this);
         }
     }
 
@@ -80,6 +85,7 @@ public class ProxyPatternTest {
     public static NormalObject cglibDynamicProxyFn() {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(NormalObject.class);
+//        enhancer.setSuperclass(NormalObjectImpl.class);
       /*  enhancer.setCallback(new FixedValue() {
             @Override
             public Object loadObject() throws Exception {

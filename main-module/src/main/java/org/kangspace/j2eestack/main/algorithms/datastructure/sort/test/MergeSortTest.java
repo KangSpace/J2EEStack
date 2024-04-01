@@ -42,7 +42,8 @@ public class MergeSortTest extends Sort {
 
     /**
      * 合并无需子序列为有序序列
-     *<a href="https://www.cnblogs.com/chengxiao/p/6194356.html">https://www.cnblogs.com/chengxiao/p/6194356.html</a>
+     * <a href="https://www.cnblogs.com/chengxiao/p/6194356.html">https://www.cnblogs.com/chengxiao/p/6194356.html</a>
+     *
      * @param arr
      * @param left
      * @param right
@@ -51,22 +52,22 @@ public class MergeSortTest extends Sort {
     public void merge(int[] arr, int left, int mid, int right, int[] temp) {
         //左序指针
         int i = left,
-        //右序指针
-            j = mid + 1,
-        // 临时数组指针
-            t = 0;
+                //右序指针
+                j = mid + 1,
+                // 临时数组指针
+                t = 0;
         //1. 将右侧子序列与左侧子序列比较,并将排序结果放到temp中
-        for (; i <= mid &&j<= right;) {
+        for (; i <= mid && j <= right; ) {
             if (arr[i] <= arr[j]) {
                 temp[t++] = arr[i++];
-            }else{
+            } else {
                 temp[t++] = arr[j++];
             }
         }
 
         // 2. 将左子序列剩余数据填入temp
         while (i <= mid) {
-            temp[t++] = arr[i++] ;
+            temp[t++] = arr[i++];
         }
         // 3. 将右子序列剩余数据填入temp
         while (j <= right) {
