@@ -33,7 +33,17 @@ class RedBlackTree:
     > 1. 新插入的节点是红色节点
     > 2. 红黑树是平衡二叉树
 
+    重点:
 
+    1. 着色和旋转
+
+        1. 插入节点
+
+           - 普通情况(根、父节点为黑色， 重新着色、直接插入)
+           - 普通情况2(父节点、叔节点都为红色， 着色)
+           - 处理双红节点冲突(4种情况， 旋转+着色)
+
+        2. 删除节点
 
     常用方法:
     1. 插入节点
@@ -45,6 +55,10 @@ class RedBlackTree:
 
     def __init__(self):
         self.root = None
+        self.ll = False  # LL Case标记, 非执行左旋,实际是执行右旋. 有些代码会将这个字段表示为旋转方向
+        self.lr = False  # LR Case标记
+        self.rr = False  # RR Case标记
+        self.rl = False  # RL Case标记
 
     def insert(self, value):
         """插入节点
@@ -169,9 +183,9 @@ class RedBlackTree:
         2. 【父节点是黑色: 直接插入新节点】, 直接插入新节点, 其他不变
         3. 【父节点是红色, 叔叔节点都是红色:  着色+重复检查祖父节点】, 父节点和叔叔节点都设置为黑色, 祖父节点设置为红色, 重复检查祖父节点
         4. 【父节点是红色, 叔叔节点是黑色: 4种情况-旋转+着色】, 根据新节点的位置进行不同的旋转, 并设置颜色
-            LL: 新节点在【左子树的左节点】, 父节点变更为【黑色】,祖父节点变为【红色】, 以父节点为根节点的子树进行【右旋】
+            LL: 新节点在【左子树的左节点】, 父节点变更为【黑色】,祖父节点变为【红色】, 以【祖父节点】为根节点的子树进行【右旋】
             LR: 新节点在【左子树的右节点】, 新节点左旋后变为【LL】情况, 修改旧的父节点为【红色】, 新节点为【黑色】, 以新节点为根节点的子树进行【LL Case操作】
-            RR: 新节点在【右子树的右节点】, 父节点变更为【黑色】,祖父节点变为【红色】, 以父节点为根节点的子树进行【左旋】
+            RR: 新节点在【右子树的右节点】, 父节点变更为【黑色】,祖父节点变为【红色】, 以【祖父节点】为根节点的子树进行【左旋】
             RL: 新节点在【右子树的左节点】, 新节点右旋后变为【RR】情况, 修改旧的父节点为【红色】, 新节点为【黑色】, 以新节点为根节点的子树进行【RR Case操作】
                     
         旋转后着色的情况:
@@ -181,17 +195,106 @@ class RedBlackTree:
         Args:
             value: 节点的键值
         """
-        new_node = Node(value)
+        # 情况1: 插入节点为根节点
+        if self.root is None:
+            self.root = Node(value)
+            self.root.red = False  # 根节点设置为黑色
+            return
+        # 如果根节点不为空, 则调用插入辅助函数
 
-        # 情况1: 插入的节点是根节点
-        if not self.root:
-            new_node.red = False
-            self.root = new_node
-            return new_node
-        return self.insert_helper(self.root, value)
+        self.root = self.insert_helper(self.root, value)
 
-    def insert_helper(self, root, new_node):
-        """插入节点的辅助函数"""
+    def insert_helper(self, root, value):
+        """
+        插入节点的辅助函数
+        """
+        rr_flag = False  # RED-RED冲突【双红节点冲突】
+        if not root:
+            # 节点最开始插入的位置
+            return Node(value)
+        elif value < root.value:
+            # 左侧插入
+            root.left = self.insert_helper(root.left, value)
+            root.left.parent = root
+            if root != self.root:
+                # 判断是否存在 双红节点
+                if root.left.red and root.red:
+                    rr_flag = True
+        elif value > root.value:
+            # 右侧插入
+            root.right = self.insert_helper(root.right, value)
+            root.right.parent = root
+            if root != self.root:
+                # 判断是否存在 双红节点
+                if root.right.red and root.red:
+                    rr_flag = True
+        else:
+            # 节点已存在
+            print(f"Node with value {value} already exists. skipping insertion.")
+            return root
+
+        # 旋转处理, 实际是处理下一层导致的不平衡
+        if self.ll:
+            # LL Case, 右旋, 基于root节点右旋, root为新增节点的祖父节点
+            root = self.right_rotate(root)
+            # 新的父节点(原父节点的左节点)
+            root.red = False  # 父节点着色为黑色
+            root.right.red = True  # 原祖父节点变为红色
+            self.ll = False
+        elif self.rr:
+            # RR Case
+            # TODO xxxx
+            pass
+        elif self.lr:
+            # LR Case
+            pass
+        elif self.rl:
+            # RL Case
+            pass
+
+        # 双红处理
+        if rr_flag:
+            # 存在双红, 情况3: 父节点是红色, 判断叔节点情况, 以下的【父节点】指 当前root
+            # 旋转不在这一层操作, 需要递归到上一层完成
+            # 1. 判断节点在左右子树的情况
+            if root.parent.right == root:
+                # 节点在右子树
+                # 判断节点情况(即, 判断叔节点颜色, 来确定4中情况及其旋转方式)
+                if root.parent.left is None or not root.parent.left.red:
+                    # 叔节点是黑色(2种情况， RR Case 和 RL Case)
+                    # 判断节点在右子树的左子树还是右子树, 此时: root节点的已存在的节点一定是黑色, 新节点是红色
+                    if root.left is not None and root.left.red:
+                        # 节点在右子树的左子树, 即 RL Case
+                        self.rl = True
+                    elif root.right is not None and root.right.red:
+                        # 叔节点是红色(2种情况， LR Case 和 LL Case)
+                        # 节点在右子树的右子树, 即 LL Case
+                        self.rr = True
+                else:
+                    # 叔节点是红色, 直接着色, 父节点、叔节点着色为黑色, 祖父节点着色为红色(不能是根节点)
+                    root.red = False  # 父节点着色为黑色
+                    root.parent.left.red = False  # 叔节点着色为黑色
+                    if root.parent != self.root:
+                        root.parent.red = True  # 祖父节点着色为红色
+            else:
+                # 节点在左子树
+                if root.parent.right is None or root.parent.right.red == False:
+                    # 叔节点不存在或者叔节点为黑色(2种情况， LR Case 和 LL Case)
+                    if root.left is not None and root.left.red:
+                        # 节点在左子树的左子树, 即 LL Case
+                        self.ll = True
+                    elif root.right is not None and root.right.red:
+                        # 节点在左子树的右子树, 即 LR Case
+                        self.lr = True
+                    pass
+                else:
+                    # 叔节点存在且为红色, 直接着色, 父节点,叔节点着色为黑色, 祖父节点着色为红色(不能是根节点)
+                    root.red = False  # 父节点着色为黑色
+                    root.parent.right.red = False  # 叔节点着色为黑色
+                    if root.parent != self.root:
+                        root.parent.red = True  # 祖父节点着色为红色
+
+        #
         pass
 
     def left_rotate(self, node):
