@@ -184,9 +184,9 @@ class RedBlackTree:
         3. 【父节点是红色, 叔叔节点都是红色:  着色+重复检查祖父节点】, 父节点和叔叔节点都设置为黑色, 祖父节点设置为红色, 重复检查祖父节点
         4. 【父节点是红色, 叔叔节点是黑色: 4种情况-旋转+着色】, 根据新节点的位置进行不同的旋转, 并设置颜色
             LL: 新节点在【左子树的左节点】, 父节点变更为【黑色】,祖父节点变为【红色】, 以【祖父节点】为根节点的子树进行【右旋】
-            LR: 新节点在【左子树的右节点】, 新节点左旋后变为【LL】情况, 修改旧的父节点为【红色】, 新节点为【黑色】, 以新节点为根节点的子树进行【LL Case操作】
+            LR: 新节点在【左子树的右节点】, 新节点的父节点左旋后变为【LL】情况, 修改旧的父节点为【红色】, 新节点为【黑色】, 以新节点为根节点的子树进行【LL Case操作】
             RR: 新节点在【右子树的右节点】, 父节点变更为【黑色】,祖父节点变为【红色】, 以【祖父节点】为根节点的子树进行【左旋】
-            RL: 新节点在【右子树的左节点】, 新节点右旋后变为【RR】情况, 修改旧的父节点为【红色】, 新节点为【黑色】, 以新节点为根节点的子树进行【RR Case操作】
+            RL: 新节点在【右子树的左节点】, 新节点的父节点右旋后变为【RR】情况, 修改旧的父节点为【红色】, 新节点为【黑色】, 以新节点为根节点的子树进行【RR Case操作】
                     
         旋转后着色的情况:
         1. LL Case 和 RR Case: 旋转后交换祖父级和父级的颜色
@@ -211,7 +211,8 @@ class RedBlackTree:
         rr_flag = False  # RED-RED冲突【双红节点冲突】
         if not root:
             # 节点最开始插入的位置
-            return Node(value)
+            new_node = Node(value)
+            return new_node
         elif value < root.value:
             # 左侧插入
             root.left = self.insert_helper(root.left, value)
@@ -233,7 +234,7 @@ class RedBlackTree:
             print(f"Node with value {value} already exists. skipping insertion.")
             return root
 
-        # 旋转处理, 实际是处理下一层导致的不平衡
+        # 旋转处理, 实际是处理下一层新增节点导致的不平衡
         if self.ll:
             # LL Case, 右旋, 基于root节点右旋, root为新增节点的祖父节点
             root = self.right_rotate(root)
@@ -242,15 +243,32 @@ class RedBlackTree:
             root.right.red = True  # 原祖父节点变为红色
             self.ll = False
         elif self.rr:
-            # RR Case
-            # TODO xxxx
-            pass
+            # RR Case, 左旋, root为新增节点的祖父节点
+            root = self.left_rotate(root)
+            root.red = False
+            root.left.red = True
+            self.rr = False
         elif self.lr:
-            # LR Case
-            pass
+            # LR Case, 先左旋, 然后执行右旋, root为新增节点的祖父节点
+            # 先对父节点进行左旋
+            root.left = self.left_rotate(root.left)
+            # 然后对当前节点进行右旋
+            root = self.right_rotate(root)
+            # 交换颜色
+            root.red = False
+            root.right.red = True
+            self.lr = False
+
         elif self.rl:
-            # RL Case
-            pass
+            # RL Case, 先右旋, 然后执行左旋, root为新增节点的祖父节点
+            # 先对父节点进行右旋
+            root.right = self.right_rotate(root.right)
+            # 然后对当前节点进行左旋
+            root = self.left_rotate(root)
+            # 交换颜色
+            root.red = False
+            root.left.red = True
+            self.rl = False
 
         # 双红处理
         if rr_flag:
@@ -267,8 +285,8 @@ class RedBlackTree:
                         # 节点在右子树的左子树, 即 RL Case
                         self.rl = True
                     elif root.right is not None and root.right.red:
-                        # 叔节点是红色(2种情况， LR Case 和 LL Case)
-                        # 节点在右子树的右子树, 即 LL Case
+                        # 叔节点是黑色(2种情况， RR Case 和 RL Case)
+                        # 节点在右子树的右子树, 即 RR Case
                         self.rr = True
                 else:
                     # 叔节点是红色, 直接着色, 父节点、叔节点着色为黑色, 祖父节点着色为红色(不能是根节点)
@@ -278,7 +296,7 @@ class RedBlackTree:
                         root.parent.red = True  # 祖父节点着色为红色
             else:
                 # 节点在左子树
-                if root.parent.right is None or root.parent.right.red == False:
+                if root.parent.right is None or not root.parent.right.red:
                     # 叔节点不存在或者叔节点为黑色(2种情况， LR Case 和 LL Case)
                     if root.left is not None and root.left.red:
                         # 节点在左子树的左子树, 即 LL Case
@@ -286,16 +304,13 @@ class RedBlackTree:
                     elif root.right is not None and root.right.red:
                         # 节点在左子树的右子树, 即 LR Case
                         self.lr = True
-                    pass
                 else:
                     # 叔节点存在且为红色, 直接着色, 父节点,叔节点着色为黑色, 祖父节点着色为红色(不能是根节点)
                     root.red = False  # 父节点着色为黑色
                     root.parent.right.red = False  # 叔节点着色为黑色
                     if root.parent != self.root:
                         root.parent.red = True  # 祖父节点着色为红色
-
-        #
-        pass
+        return root
 
     def left_rotate(self, node):
         """左旋转
@@ -334,7 +349,7 @@ class RedBlackTree:
         """
 
         if node is None or node.right is None:
-            return  # 如果无右子节点则无旋转空间
+            return node  # 如果无右子节点则无旋转空间
 
         # 设定各临时变量
         nr = node.right  # B
@@ -355,8 +370,7 @@ class RedBlackTree:
                 np.left = nr  # 更新原父节点的左子引用
             else:
                 np.right = nr  # 更新原父节点的右子引用
-        else:
-            self.root = nr  # 如果A是根节点, 更新根节点为B
+        # 注意：不在这里直接修改self.root，让调用者处理
 
         # 更新当前节点(A)的父节点关系
         node.parent = nr  # A.parent = B
@@ -395,6 +409,8 @@ class RedBlackTree:
         Returns:
             Node: 新的子树根节点
         """
+        if node is None or node.left is None:
+            return node  # 如果无左子节点则无旋转空间
         # 获取临时变量
         nl = node.left  # B
         nlr = nl.right  # D
@@ -436,22 +452,108 @@ class RedBlackTree:
         Args:
             value: 节点的键值
         """
-        pass
+        current = self.root
+        while current is not None:
+            if value == current.value:
+                return current
+            elif value < current.value:
+                current = current.left
+            else:  # value > current.value
+                current = current.right
+        return None
+
+    def search_helper(self, root, value):
+        """
+        查找节点的辅助函数(search函数的递归版)
+        Args:
+            root: 当前节点
+            value: 要查找的值
+        """
+        if root is None:
+            return None
+        if root.value == value:
+            return root
+        if value < root.value:
+            return self.search_helper(root.left, value)
+        return self.search_helper(root.right, value)
+
+    def tree_height(self, node):
+        """获取树的高度"""
+        if node is None:
+            return 0
+        return max(self.tree_height(node.left), self.tree_height(node.right)) + 1
 
     def print(self):
         """打印红黑树"""
-        self._print(self.root)
+        # 打印中序遍历结果
+        print("树高度:", self.tree_height(self.root))
+        print("中序遍历:", end=" ")
+        self._print_midorder(self.root)
+        print()
+        # 打印树结构
+        self.print_tree(self.root)
+        print()
 
-    def _print(self, node):
-        """打印节点"""
+    def _print_preorder(self, node):
+        """
+        打印节点: 前序遍历
+        """
+        if node is None:
+            return
+        print(f"{node.value}({'R' if node.red else 'B'})", end=" ")
+        self._print_preorder(node.left)
+        self._print_preorder(node.right)
+
+    def _print_midorder(self, node):
+        """
+        打印节点: 中序遍历
+        """
+        if node is None:
+            return
+        self._print_midorder(node.left)
+        print(f"{node.value}({'R' if node.red else 'B'})", end=" ")
+        self._print_midorder(node.right)
+
+    def _print_level_order(self, node):
+        """打印节点: 层序遍历"""
         if node is None:
             return
         print(node.value)
-        self._print(node.left)
-        self._print(node.right)
+        print(node.left)
+        print(node.right)
+
+    def print_tree(self, node):
+        """打印树结构"""
+        if node is None:
+            print("空树")
+            return
+
+        def print_tree_recursive(node, prefix="", is_left=True):
+            """递归打印树结构"""
+            if node is None:
+                return
+
+            # 打印当前节点
+            color = "R" if node.red else "B"
+            print(f"{prefix}{'└── ' if is_left else '┌── '}{node.value}({color})")
+
+            # 计算新的前缀
+            new_prefix = prefix + ("    " if is_left else "│   ")
+
+            # 递归打印右子树（先打印右子树，这样在控制台中显示更直观）
+            if node.right is not None:
+                print_tree_recursive(node.right, new_prefix, False)
+
+            # 递归打印左子树
+            if node.left is not None:
+                print_tree_recursive(node.left, new_prefix, True)
+
+        print("红黑树结构:")
+        print_tree_recursive(node)
 
 
 def main():
+    """主函数"""
     rb_tree = RedBlackTree()
     rb_tree.insert(1)
     rb_tree.insert(2)
@@ -462,3 +564,8 @@ def main():
     rb_tree.insert(7)
     rb_tree.insert(8)
     rb_tree.print()
+    print(rb_tree.search(8))
+
+
+if __name__ == "__main__":
+    main()
