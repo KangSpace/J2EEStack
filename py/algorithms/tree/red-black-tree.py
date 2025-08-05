@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
+from tree_util import *
+
+
 class Node:
     """A node in a red-black tree."""
 
@@ -836,15 +839,6 @@ class RedBlackTree:
         self._print_postorder(node.right)
         print(f"{node.value}({'R' if node.red else 'B'})", end=" ")
 
-    def _print_level_order(self, node):
-        """打印节点: 层序遍历"""
-        if node is None:
-            return
-        # TODO
-        print(node.value)
-        print(node.left)
-        print(node.right)
-
     ##########
     # 树的遍历 END
     ##########
@@ -894,6 +888,9 @@ def main():
     rb_tree.delete_by_value(5)
     rb_tree.print()
     print(rb_tree.search(8))
+    level_order_traversal(rb_tree.root)
+    level_order_traversal_2(rb_tree.root, True)
+    print_tree_structure(rb_tree.root, is_root=True)
 
 
 if __name__ == "__main__":
