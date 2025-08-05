@@ -616,7 +616,7 @@ class RedBlackTree:
         Args:
             v: 需要删除的节点
         """
-        # 1. 获取替代节点
+        # 1. 获取替代节点(右子树后继节点)
         u = self.bst_replace_node(v)
         # 2. 判断是否双黑
         uv_duble_black = (not v.red) and (u is None or not u.red)
@@ -680,8 +680,8 @@ class RedBlackTree:
     def fix_double_black(self, node):
         """
         处理双黑节点
-
-
+        Args:
+            node: 需要处理的节点
         """
         if node == self.root:
             return
